@@ -1,16 +1,23 @@
 package main
 
 import (
-	"byu.edu/poc-imaging/pages"
+	"byu.edu/poc-imaging/adapters"
 	"log"
 	"net/http"
 )
 
 func main() {
-	//mux := http.NewServeMux()
+	mux := http.NewServeMux()
 
-	http.HandleFunc("GET /index", pages.IndexHtmlAdapter)
+	htmlAdapter, err := adapters.NewHtmlAdapter(mux)
+	if err != nil {
+		log.Fatalf("Failed to instantiate HtmlAdapter: %s", err)
+	}
+	htmlAdapter.HandleRoutes()
 
 	log.Print("Listening...")
-	log.Fatal(http.ListenAndServe(":8080", nil))
+	err = http.ListenAndServe(":8080", mux)
+	if err != nil {
+		log.Fatal(err)
+	}
 }
