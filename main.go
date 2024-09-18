@@ -15,6 +15,12 @@ func main() {
 	}
 	htmlAdapter.HandleRoutes()
 
+	restAdapter, err := adapters.NewRestAdapter(mux)
+	if err != nil {
+		return
+	}
+	restAdapter.HandleRoutes()
+
 	log.Print("Listening...")
 	err = http.ListenAndServe(":8080", mux)
 	if err != nil {
