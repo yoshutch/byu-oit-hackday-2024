@@ -13,7 +13,7 @@ type HtmlAdapter struct {
 
 func NewHtmlAdapter(mux *http.ServeMux) (*HtmlAdapter, error) {
 	// TODO parse all templates into a map of some kind?
-	indexTmpl, err := template.ParseFiles("pages/index.html")
+	indexTmpl, err := template.ParseFiles("pages/index.html", "pages/layout.html")
 	if err != nil {
 		log.Printf("Error parsing file: %s", err)
 		return nil, err
@@ -28,10 +28,14 @@ func (h HtmlAdapter) HandleRoutes() {
 	// Index.html
 	h.mux.HandleFunc("GET /{$}", func(w http.ResponseWriter, r *http.Request) {
 		type IndexData struct {
-			Greeting string
+			PageTitle string
+			Greeting  string
 		}
-		data := IndexData{Greeting: "Hello BYU!"}
-		err := h.indexTmpl.Execute(w, data)
+		data := IndexData{
+			//PageTitle: "Greeting!",
+			Greeting: "Hello BYU!",
+		}
+		err := h.indexTmpl.ExecuteTemplate(w, "layout", data)
 		if err != nil {
 			log.Printf("Error executing template: %s", err)
 			return

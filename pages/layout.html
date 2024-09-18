@@ -1,0 +1,19 @@
+{{define "layout"}}
+<html>
+<head>
+    <title>{{if .PageTitle}}{{.PageTitle}}{{else}}Imaging{{end}}</title>
+    <script async src="https://cdn.byu.edu/byu-theme-components/2.x.x/byu-theme-components.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.byu.edu/byu-theme-components/2.x.x/byu-theme-components.min.css" media="all">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+<byu-header>
+    <h1 slot="site-title">{{if .PageTitle}}{{.PageTitle}}{{else}}Imaging{{end}}</h1>
+</byu-header>
+<div>
+{{template "content" .}}
+</div>
+<byu-footer></byu-footer>
+</body>
+</html>
+{{end}}
