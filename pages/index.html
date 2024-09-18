@@ -1,6 +1,16 @@
 {{define "content"}}
-<h1>Index</h1>
+<h1>Document Search</h1>
 <div>
     <h2>{{.Greeting}}</h2>
+    <form hx-post="/ajax/searchDocs"
+          hx-target="#search-results"
+          hx-swap="outerHTML">
+        <label for="yearTerm">Year Term:</label>
+        <input id="yearTerm" type="text" name="yearTerm"/>
+        <button type="submit">
+            Find Documents
+        </button>
+    </form>
+    <div id="search-results"></div>
 </div>
 {{end}}

@@ -1,6 +1,7 @@
 package adapters
 
 import (
+	"fmt"
 	"html/template"
 	"log"
 	"net/http"
@@ -40,5 +41,19 @@ func (h HtmlAdapter) HandleRoutes() {
 			log.Printf("Error executing template: %s", err)
 			return
 		}
+	})
+
+	// Ajax calls
+	h.mux.HandleFunc("POST /ajax/searchDocs", func(w http.ResponseWriter, r *http.Request) {
+		err := r.ParseForm()
+		if err != nil {
+			log.Printf("Error parsing form: %s", err)
+			fmt.Fprint(w, `<div id="search-results">Error parsing form<div>`)
+			return
+		}
+
+		fmt.Printf("Request form: %s", r.Form)
+		yearTerm := r.FormValue("yearTerm")
+		fmt.Fprintf(w, `<div id="search-results">TADA! Got to HTMX for yearTerm: %s!<div>`, yearTerm)
 	})
 }
