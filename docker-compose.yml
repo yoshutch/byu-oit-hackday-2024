@@ -1,5 +1,9 @@
 services:
-  web:
-    build: .
+  profile:
+    build: ./profile
     ports:
       - "8080:8080"
+  favorite-color:
+    build: ./favorite-color
+    ports:
+      - "8081:8081"

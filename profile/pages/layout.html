@@ -1,0 +1,21 @@
+{{define "layout"}}
+<html>
+<head>
+    <title>GoTH HackDay</title>
+    <script async src="https://cdn.byu.edu/byu-theme-components/2.x.x/byu-theme-components.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.byu.edu/byu-theme-components/2.x.x/byu-theme-components.min.css" media="all">
+    <!-- HTMX -->
+    <script src="https://unpkg.com/htmx.org@2.0.2"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+<byu-header>
+    <h1 slot="site-title">GoTH HackDay 2024</h1>
+</byu-header>
+<div>
+{{template "content" .}}
+</div>
+<byu-footer></byu-footer>
+</body>
+</html>
+{{end}}

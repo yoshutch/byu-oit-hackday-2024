@@ -1,7 +1,7 @@
 package main
 
 import (
-	"byu.edu/poc-imaging/adapters"
+	"byu.edu/hackday-favorite-color/adapters"
 	"log"
 	"net/http"
 )
@@ -22,7 +22,7 @@ func main() {
 	restAdapter.HandleRoutes()
 
 	log.Print("Listening...")
-	err = http.ListenAndServe(":8080", mux)
+	err = http.ListenAndServe(":8081", mux)
 	if err != nil {
 		log.Fatal(err)
 	}
