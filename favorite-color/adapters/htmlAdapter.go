@@ -1,17 +1,16 @@
 package adapters
 
 import (
+	"byu.edu/hackday-favorite-color/clients"
 	"byu.edu/hackday-profile/dto"
-	"fmt"
 	"html/template"
 	"log"
 	"net/http"
 )
 
 type HtmlAdapter struct {
-	mux               *http.ServeMux
-	indexTmpl         *template.Template
-	searchResultsTmpl *template.Template
+	mux       *http.ServeMux
+	indexTmpl *template.Template
 }
 
 func NewHtmlAdapter(mux *http.ServeMux) (*HtmlAdapter, error) {
@@ -21,7 +20,6 @@ func NewHtmlAdapter(mux *http.ServeMux) (*HtmlAdapter, error) {
 		log.Printf("Error parsing file: %s", err)
 		return nil, err
 	}
-	searchResultsTmpl, err := template.ParseFiles("pages/searchResults.html")
 	if err != nil {
 		log.Printf("Error parsing file: %s", err)
 		return nil, err
@@ -29,7 +27,6 @@ func NewHtmlAdapter(mux *http.ServeMux) (*HtmlAdapter, error) {
 	return &HtmlAdapter{
 		mux,
 		indexTmpl,
-		searchResultsTmpl,
 	}, nil
 }
 
@@ -40,58 +37,18 @@ func (h HtmlAdapter) HandleRoutes() {
 			Profile *dto.Profile
 			Color   string
 		}
+
+		profile, err := clients.GetProfile(1)
+		if err != nil {
+			log.Printf("Error calling API: %s", err)
+			return
+		}
 		data := IndexData{
 			//PageTitle: "Greeting!",
-			Profile: &dto.Profile{
-				Id:        1,
-				FirstName: "Scott",
-				LastName:  "Hutchings",
-			},
-			Color: "green",
+			Profile: profile,
+			Color:   "green",
 		}
-		err := h.indexTmpl.ExecuteTemplate(w, "layout", data)
-		if err != nil {
-			log.Printf("Error executing template: %s", err)
-			return
-		}
-	})
-
-	// Ajax calls
-	h.mux.HandleFunc("POST /ajax/searchDocs", func(w http.ResponseWriter, r *http.Request) {
-		err := r.ParseForm()
-		if err != nil {
-			log.Printf("Error parsing form: %s", err)
-			fmt.Fprint(w, `<div id="search-results">Error parsing form<div>`)
-			return
-		}
-
-		fmt.Printf("Request form: %s", r.Form)
-
-		type SearchResult struct {
-			LastModified string
-			TimePeriod   string
-			College      string
-			DocumentType string
-		}
-		type Data struct {
-			Results []SearchResult
-		}
-		results := make([]SearchResult, 0)
-		results = append(results, SearchResult{
-			LastModified: "05 Aug 2023",
-			TimePeriod:   "2024 AUG",
-			College:      "Business",
-			DocumentType: "RTLGradPost",
-		})
-		results = append(results, SearchResult{
-			LastModified: "06 Aug 2023",
-			TimePeriod:   "2023 AUG",
-			College:      "Nowhere",
-			DocumentType: "RTLGradPost",
-		})
-		err = h.searchResultsTmpl.Execute(w, Data{
-			Results: results,
-		})
+		err = h.indexTmpl.ExecuteTemplate(w, "layout", data)
 		if err != nil {
 			log.Printf("Error executing template: %s", err)
 			return

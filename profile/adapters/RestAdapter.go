@@ -1,16 +1,19 @@
 package adapters
 
 import (
+	"byu.edu/hackday-profile/services"
 	"encoding/json"
 	"net/http"
+	"strconv"
 )
 
 type RestAdapter struct {
-	mux *http.ServeMux
+	mux            *http.ServeMux
+	profileService *services.ProfileService
 }
 
-func NewRestAdapter(mux *http.ServeMux) (*RestAdapter, error) {
-	return &RestAdapter{mux}, nil
+func NewRestAdapter(mux *http.ServeMux, service *services.ProfileService) (*RestAdapter, error) {
+	return &RestAdapter{mux, service}, nil
 }
 
 type ErrorDTO struct {
@@ -30,12 +33,24 @@ func (RestAdapter) NotFoundHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func (a RestAdapter) HandleRoutes() {
-	a.mux.HandleFunc("GET /api/foo", func(w http.ResponseWriter, r *http.Request) {
-		type Foo struct {
-			Foo string `json:"foo"`
+	a.mux.HandleFunc("GET /api/profile/{id}", func(w http.ResponseWriter, r *http.Request) {
+		idStr := r.PathValue("id")
+		id, err := strconv.Atoi(idStr)
+		if err != nil {
+			a.InternalServerErrorHandler(w, r)
+			return
+		}
+		profile, err := a.profileService.LoadProfile(id)
+		if err != nil {
+			a.InternalServerErrorHandler(w, r)
+			return
+		}
+		if profile == nil {
+			a.NotFoundHandler(w, r)
+			return
 		}
 		// get data from service classes
-		jsonBytes, err := json.Marshal(Foo{Foo: "bar"})
+		jsonBytes, err := json.Marshal(profile)
 		if err != nil {
 			a.InternalServerErrorHandler(w, r)
 			return

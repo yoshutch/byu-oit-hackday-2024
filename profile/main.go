@@ -37,7 +37,7 @@ func main() {
 	}
 	htmlAdapter.HandleRoutes()
 
-	restAdapter, err := adapters.NewRestAdapter(mux)
+	restAdapter, err := adapters.NewRestAdapter(mux, profileService)
 	if err != nil {
 		return
 	}

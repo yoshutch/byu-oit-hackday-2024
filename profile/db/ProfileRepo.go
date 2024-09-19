@@ -29,6 +29,9 @@ func (r ProfileRepo) GetProfile(id int) (*dto.Profile, error) {
 	var profile dto.Profile
 	err := row.Scan(&profile.Id, &profile.FirstName, &profile.LastName)
 	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, nil
+		}
 		return nil, err
 	}
 	return &profile, nil
