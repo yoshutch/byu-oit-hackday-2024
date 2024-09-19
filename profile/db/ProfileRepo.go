@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 	_ "github.com/lib/pq"
+	"log"
 )
 
 type ProfileRepo struct {
@@ -36,4 +37,18 @@ func (r ProfileRepo) GetProfile(id int) (*Profile, error) {
 		return nil, err
 	}
 	return &profile, nil
+}
+
+func (r ProfileRepo) UpdateProfile(profile *Profile) error {
+	stmt, err := r.db.Prepare("UPDATE profiles set first_name = $2, last_name = $3 where id = $1")
+	if err != nil {
+		return err
+	}
+	result, err := stmt.Exec(profile.Id, profile.FirstName, profile.LastName)
+	//_, err := r.db.Exec("UPDATE profiles set first_name = $2 and last_name = $3 where id = $1", profile.Id, profile.FirstName, profile.LastName)
+	if err != nil {
+		return err
+	}
+	log.Printf("exect result: %s", result)
+	return nil
 }

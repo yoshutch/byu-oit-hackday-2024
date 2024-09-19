@@ -2,6 +2,7 @@ package adapters
 
 import (
 	"byu.edu/hackday-profile/db"
+	"byu.edu/hackday-profile/services"
 	"fmt"
 	"html/template"
 	"log"
@@ -9,12 +10,12 @@ import (
 )
 
 type HtmlAdapter struct {
-	mux         *http.ServeMux
-	indexTmpl   *template.Template
-	profileRepo *db.ProfileRepo
+	mux            *http.ServeMux
+	indexTmpl      *template.Template
+	profileService *services.ProfileService
 }
 
-func NewHtmlAdapter(mux *http.ServeMux, profileRepo *db.ProfileRepo) (*HtmlAdapter, error) {
+func NewHtmlAdapter(mux *http.ServeMux, profileService *services.ProfileService) (*HtmlAdapter, error) {
 	// TODO parse all templates into a map of some kind?
 	indexTmpl, err := template.ParseFiles("pages/index.html", "pages/layout.html")
 	if err != nil {
@@ -25,7 +26,7 @@ func NewHtmlAdapter(mux *http.ServeMux, profileRepo *db.ProfileRepo) (*HtmlAdapt
 	return &HtmlAdapter{
 		mux,
 		indexTmpl,
-		profileRepo,
+		profileService,
 	}, nil
 }
 
@@ -35,7 +36,7 @@ func (a HtmlAdapter) HandleRoutes() {
 		type IndexData struct {
 			Profile *db.Profile
 		}
-		profile, err := a.profileRepo.GetProfile(1)
+		profile, err := a.profileService.LoadProfile(1)
 		if err != nil {
 			log.Printf("Error getting profile: %s", err)
 			return
@@ -57,11 +58,17 @@ func (a HtmlAdapter) HandleRoutes() {
 		err := r.ParseForm()
 		if err != nil {
 			log.Printf("Error parsing form: %s", err)
-			fmt.Fprint(w, `<div id="search-results">Error parsing form<div>`)
+			fmt.Fprint(w, `<div id="results">Error parsing form</div>`)
 			return
 		}
 
 		fmt.Printf("Request form: %s", r.Form)
+		err = a.profileService.SaveProfile(1, r.FormValue("FirstName"), r.FormValue("LastName"))
+		if err != nil {
+			log.Printf("Error saving profile: %s", err)
+			fmt.Fprint(w, `<div id="results">Error saving profile</div>`)
+			return
+		}
 
 		fmt.Fprintf(w, `<div id="results">Saved Successfully!</div>`)
 		if err != nil {
