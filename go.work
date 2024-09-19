@@ -1,0 +1,8 @@
+go 1.23
+
+use (
+	favorite-color
+	profile
+)
+
+//replace byu.edu/hackday-profile => ./profile

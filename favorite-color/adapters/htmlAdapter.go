@@ -1,6 +1,7 @@
 package adapters
 
 import (
+	"byu.edu/hackday-profile/dto"
 	"fmt"
 	"html/template"
 	"log"
@@ -36,12 +37,17 @@ func (h HtmlAdapter) HandleRoutes() {
 	// Index.html
 	h.mux.HandleFunc("GET /{$}", func(w http.ResponseWriter, r *http.Request) {
 		type IndexData struct {
-			PageTitle string
-			Greeting  string
+			Profile *dto.Profile
+			Color   string
 		}
 		data := IndexData{
 			//PageTitle: "Greeting!",
-			Greeting: "Hello BYU!",
+			Profile: &dto.Profile{
+				Id:        1,
+				FirstName: "Scott",
+				LastName:  "Hutchings",
+			},
+			Color: "green",
 		}
 		err := h.indexTmpl.ExecuteTemplate(w, "layout", data)
 		if err != nil {
