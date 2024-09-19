@@ -2,7 +2,9 @@ package main
 
 import (
 	"byu.edu/hackday-favorite-color/adapters"
+	"byu.edu/hackday-favorite-color/db"
 	"byu.edu/hackday-favorite-color/events"
+	"byu.edu/hackday-favorite-color/services"
 	"log"
 	"net/http"
 	"os"
@@ -11,9 +13,19 @@ import (
 )
 
 func main() {
+	// setup dependencies
+	favColorRepo, err := db.NewFavColorRepo("root", "password", 5433, "hackday")
+	if err != nil {
+		log.Fatalf("Error connecting to database: %s", err)
+	}
+	favColorService, err := services.NewFavColorService(favColorRepo)
+	if err != nil {
+		log.Fatalf("Error creating service: %s", err)
+	}
+
 	mux := http.NewServeMux()
 
-	htmlAdapter, err := adapters.NewHtmlAdapter(mux)
+	htmlAdapter, err := adapters.NewHtmlAdapter(mux, favColorService)
 	if err != nil {
 		log.Fatalf("Failed to instantiate HtmlAdapter: %s", err)
 	}
@@ -25,7 +37,7 @@ func main() {
 	}
 	restAdapter.HandleRoutes()
 
-	eventAdapter, err := events.NewEventAdapter()
+	eventAdapter, err := events.NewEventAdapter(favColorService)
 	if err != nil {
 		log.Fatalf("Failed to instantiate event adapter: %s", err)
 	}

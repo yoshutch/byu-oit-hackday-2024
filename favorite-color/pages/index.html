@@ -1,7 +1,9 @@
 {{define "content"}}
-<h1>{{.Profile.FirstName}}'s Favorite Color</h1>
+<h1>{{.FavColor.Name}}'s Favorite Color</h1>
 <div>
-    <h2>{{.Color}}</h2>
-    <div style="width: 100px; height: 100px; background-color: {{.Color}}"></div>
+    <h2>{{.FavColor.Color}}</h2>
+    <div style="width: 100px; height: 100px; background-color: {{.FavColor.Color}}"></div>
+    <div>Profile First Name: {{.Profile.FirstName}}</div>
+    <div>Profile Last Name: {{.Profile.LastName}}</div>
 </div>
 {{end}}
