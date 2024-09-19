@@ -23,8 +23,10 @@ func main() {
 		log.Fatalf("Error creating service: %s", err)
 	}
 
+	// http server
+	fs := http.FileServer(http.Dir("static/"))
 	mux := http.NewServeMux()
-
+	mux.Handle("/static/", http.StripPrefix("/static/", fs))
 	htmlAdapter, err := adapters.NewHtmlAdapter(mux, favColorService)
 	if err != nil {
 		log.Fatalf("Failed to instantiate HtmlAdapter: %s", err)

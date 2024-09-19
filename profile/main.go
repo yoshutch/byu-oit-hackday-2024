@@ -29,8 +29,10 @@ func main() {
 	}
 	log.Printf("here: %s", eventAdapter)
 
-	// create web server
+	// http server
+	fs := http.FileServer(http.Dir("static/"))
 	mux := http.NewServeMux()
+	mux.Handle("/static/", http.StripPrefix("/static/", fs))
 	htmlAdapter, err := adapters.NewHtmlAdapter(mux, profileService)
 	if err != nil {
 		log.Fatalf("Failed to instantiate HtmlAdapter: %s", err)

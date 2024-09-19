@@ -7,14 +7,16 @@
     <!-- HTMX -->
     <script src="https://unpkg.com/htmx.org@2.0.2"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/main.css"/>
 </head>
 <body>
 <byu-header>
     <h1 slot="site-title">GoTH HackDay 2024</h1>
+    <span slot="site-title" class="subtitle">My Favorite Color</span>
 </byu-header>
-<div>
-{{template "content" .}}
-</div>
+<main>
+    {{template "content" .}}
+</main>
 <byu-footer></byu-footer>
 </body>
 </html>

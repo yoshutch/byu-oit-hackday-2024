@@ -22,7 +22,7 @@ func NewEventAdapter(service *services.FavColorService) (*EventAdapter, error) {
 		Partition: 0,
 		MaxBytes:  10e6,
 	})
-	err := r.SetOffset(7)
+	err := r.SetOffset(10)
 	if err != nil {
 		return nil, err
 	}
