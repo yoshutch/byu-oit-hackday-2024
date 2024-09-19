@@ -1,16 +1,17 @@
 {{define "content"}}
 <h1>Profile</h1>
 <div>
-    <h2>{{.Greeting}}</h2>
-    <form hx-post="/ajax/searchDocs"
-          hx-target="#search-results"
+    <form hx-post="/ajax/saveProfile"
+          hx-target="#results"
           hx-swap="outerHTML">
-        <label for="yearTerm">Year Term:</label>
-        <input id="yearTerm" type="text" name="yearTerm"/>
+        <label for="firstName">First Name:</label>
+        <input id="firstName" type="text" name="firstName" value="{{.Profile.FirstName}}"/>
+        <label for="lastName">Last Name:</label>
+        <input id="lastName" type="text" name="lastName" value="{{.Profile.LastName}}"/>
         <button type="submit">
-            Find Documents
+            Save Profile
         </button>
     </form>
-    <div id="search-results"></div>
+    <div id="results"></div>
 </div>
 {{end}}

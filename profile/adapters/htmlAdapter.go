@@ -1,6 +1,7 @@
 package adapters
 
 import (
+	"byu.edu/hackday-profile/db"
 	"fmt"
 	"html/template"
 	"log"
@@ -8,42 +9,43 @@ import (
 )
 
 type HtmlAdapter struct {
-	mux               *http.ServeMux
-	indexTmpl         *template.Template
-	searchResultsTmpl *template.Template
+	mux         *http.ServeMux
+	indexTmpl   *template.Template
+	profileRepo *db.ProfileRepo
 }
 
-func NewHtmlAdapter(mux *http.ServeMux) (*HtmlAdapter, error) {
+func NewHtmlAdapter(mux *http.ServeMux, profileRepo *db.ProfileRepo) (*HtmlAdapter, error) {
 	// TODO parse all templates into a map of some kind?
 	indexTmpl, err := template.ParseFiles("pages/index.html", "pages/layout.html")
 	if err != nil {
 		log.Printf("Error parsing file: %s", err)
 		return nil, err
 	}
-	searchResultsTmpl, err := template.ParseFiles("pages/searchResults.html")
-	if err != nil {
-		log.Printf("Error parsing file: %s", err)
-		return nil, err
-	}
+
 	return &HtmlAdapter{
 		mux,
 		indexTmpl,
-		searchResultsTmpl,
+		profileRepo,
 	}, nil
 }
 
-func (h HtmlAdapter) HandleRoutes() {
+func (a HtmlAdapter) HandleRoutes() {
 	// Index.html
-	h.mux.HandleFunc("GET /{$}", func(w http.ResponseWriter, r *http.Request) {
+	a.mux.HandleFunc("GET /{$}", func(w http.ResponseWriter, r *http.Request) {
 		type IndexData struct {
-			PageTitle string
-			Greeting  string
+			Profile *db.Profile
 		}
+		profile, err := a.profileRepo.GetProfile(1)
+		if err != nil {
+			log.Printf("Error getting profile: %s", err)
+			return
+		}
+
 		data := IndexData{
 			//PageTitle: "Greeting!",
-			Greeting: "Hello BYU!",
+			Profile: profile,
 		}
-		err := h.indexTmpl.ExecuteTemplate(w, "layout", data)
+		err = a.indexTmpl.ExecuteTemplate(w, "layout", data)
 		if err != nil {
 			log.Printf("Error executing template: %s", err)
 			return
@@ -51,7 +53,7 @@ func (h HtmlAdapter) HandleRoutes() {
 	})
 
 	// Ajax calls
-	h.mux.HandleFunc("POST /ajax/searchDocs", func(w http.ResponseWriter, r *http.Request) {
+	a.mux.HandleFunc("POST /ajax/saveProfile", func(w http.ResponseWriter, r *http.Request) {
 		err := r.ParseForm()
 		if err != nil {
 			log.Printf("Error parsing form: %s", err)
@@ -61,31 +63,7 @@ func (h HtmlAdapter) HandleRoutes() {
 
 		fmt.Printf("Request form: %s", r.Form)
 
-		type SearchResult struct {
-			LastModified string
-			TimePeriod   string
-			College      string
-			DocumentType string
-		}
-		type Data struct {
-			Results []SearchResult
-		}
-		results := make([]SearchResult, 0)
-		results = append(results, SearchResult{
-			LastModified: "05 Aug 2023",
-			TimePeriod:   "2024 AUG",
-			College:      "Business",
-			DocumentType: "RTLGradPost",
-		})
-		results = append(results, SearchResult{
-			LastModified: "06 Aug 2023",
-			TimePeriod:   "2023 AUG",
-			College:      "Nowhere",
-			DocumentType: "RTLGradPost",
-		})
-		err = h.searchResultsTmpl.Execute(w, Data{
-			Results: results,
-		})
+		fmt.Fprintf(w, `<div id="results">Saved Successfully!</div>`)
 		if err != nil {
 			log.Printf("Error executing template: %s", err)
 			return

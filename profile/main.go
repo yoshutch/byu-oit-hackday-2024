@@ -2,14 +2,19 @@ package main
 
 import (
 	"byu.edu/hackday-profile/adapters"
+	"byu.edu/hackday-profile/db"
 	"log"
 	"net/http"
 )
 
 func main() {
+	profileRepo, err := db.NewProfileRepo("root", "password", 5433, "hackday")
+	if err != nil {
+		log.Fatalf("Error connecting to database: %s", err)
+	}
 	mux := http.NewServeMux()
 
-	htmlAdapter, err := adapters.NewHtmlAdapter(mux)
+	htmlAdapter, err := adapters.NewHtmlAdapter(mux, profileRepo)
 	if err != nil {
 		log.Fatalf("Failed to instantiate HtmlAdapter: %s", err)
 	}
