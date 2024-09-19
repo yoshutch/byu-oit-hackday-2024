@@ -1,7 +1,7 @@
 package adapters
 
 import (
-	"byu.edu/hackday-profile/db"
+	"byu.edu/hackday-profile/dto"
 	"byu.edu/hackday-profile/services"
 	"fmt"
 	"html/template"
@@ -34,7 +34,7 @@ func (a HtmlAdapter) HandleRoutes() {
 	// Index.html
 	a.mux.HandleFunc("GET /{$}", func(w http.ResponseWriter, r *http.Request) {
 		type IndexData struct {
-			Profile *db.Profile
+			Profile *dto.Profile
 		}
 		profile, err := a.profileService.LoadProfile(1)
 		if err != nil {

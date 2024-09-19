@@ -2,18 +2,21 @@ package services
 
 import (
 	"byu.edu/hackday-profile/db"
+	"byu.edu/hackday-profile/dto"
+	"byu.edu/hackday-profile/events"
 	"log"
 )
 
 type ProfileService struct {
-	repo *db.ProfileRepo
+	repo         *db.ProfileRepo
+	eventAdapter *events.EventAdapter
 }
 
-func NewProfileService(repo *db.ProfileRepo) (*ProfileService, error) {
-	return &ProfileService{repo}, nil
+func NewProfileService(repo *db.ProfileRepo, adapter *events.EventAdapter) (*ProfileService, error) {
+	return &ProfileService{repo, adapter}, nil
 }
 
-func (s ProfileService) LoadProfile(id int) (*db.Profile, error) {
+func (s ProfileService) LoadProfile(id int) (*dto.Profile, error) {
 	// authorization? business logic
 	profile, err := s.repo.GetProfile(id)
 	if err != nil {
@@ -31,12 +34,21 @@ func (s ProfileService) SaveProfile(id int, firstName string, lastName string) e
 		// insert
 		return nil
 	} else {
-		updated := &db.Profile{
+		updated := &dto.Profile{
 			Id:        id,
 			FirstName: firstName,
 			LastName:  lastName,
 		}
-		return s.repo.UpdateProfile(updated)
+		err := s.repo.UpdateProfile(updated)
+		if err != nil {
+			return err
+		}
+		// send event
+		err = s.eventAdapter.SendProfileUpdatedEvent(*updated)
+		if err != nil {
+			return err
+		}
+		return nil
 	}
 	// TODO send internal event to eventbus
 }

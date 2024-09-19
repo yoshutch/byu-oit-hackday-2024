@@ -23,3 +23,12 @@ services:
       interval: 5s
       timeout: 5s
       retries: 10
+
+  eventbus:
+    image: apache/kafka
+    ports:
+      - "9092:9092"
+    volumes:
+      - ./local/kafka/data:/var/lib/kafka/data
+# TODO find a way to automatically bootstrap topics
+# manually create topic by exec into running docker: ./kafka-topics.sh --bootstrap-server localhost:9092 --create --topic profile-updated

@@ -3,20 +3,31 @@ package main
 import (
 	"byu.edu/hackday-profile/adapters"
 	"byu.edu/hackday-profile/db"
+	"byu.edu/hackday-profile/events"
 	"byu.edu/hackday-profile/services"
 	"log"
 	"net/http"
 )
 
 func main() {
+	// setup dependencies
 	profileRepo, err := db.NewProfileRepo("root", "password", 5433, "hackday")
 	if err != nil {
 		log.Fatalf("Error connecting to database: %s", err)
 	}
-	profileService, err := services.NewProfileService(profileRepo)
+	adapter, err := events.NewEventAdapter()
+	if err != nil {
+		log.Fatalf("Error connecting to eventbus: %s", err)
+	}
+	profileService, err := services.NewProfileService(profileRepo, adapter)
 	if err != nil {
 		log.Fatalf("Error creating service: %s", err)
 	}
+	eventAdapter, err := events.NewEventAdapter()
+	if err != nil {
+		log.Fatalf("Error creating eventAdpater: %s", err)
+	}
+	log.Printf("here: %s", eventAdapter)
 
 	// create web server
 	mux := http.NewServeMux()
