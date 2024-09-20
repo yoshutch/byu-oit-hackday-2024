@@ -69,3 +69,4 @@ flowchart
 - Flesh out HTTP client more than the simple request syntax I did
 - Implement go's `log/slog` package for structured logs
 - Research kafka
+- Add Tailwind styling
