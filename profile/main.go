@@ -11,7 +11,7 @@ import (
 
 func main() {
 	// setup dependencies
-	profileRepo, err := db.NewProfileRepo("root", "password", 5433, "hackday")
+	profileRepo, err := db.NewProfileRepo("root", "password", 5432, "hackday")
 	if err != nil {
 		log.Fatalf("Error connecting to database: %s", err)
 	}

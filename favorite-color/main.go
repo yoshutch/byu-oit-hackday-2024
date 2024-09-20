@@ -14,7 +14,7 @@ import (
 
 func main() {
 	// setup dependencies
-	favColorRepo, err := db.NewFavColorRepo("root", "password", 5433, "hackday")
+	favColorRepo, err := db.NewFavColorRepo("root", "password", 5432, "hackday")
 	if err != nil {
 		log.Fatalf("Error connecting to database: %s", err)
 	}
