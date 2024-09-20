@@ -7,15 +7,25 @@ import (
 	"byu.edu/hackday-profile/services"
 	"log"
 	"net/http"
+	"os"
 )
 
 func main() {
+	// env variables
+	dbHost := os.Getenv("POSTGRES_HOST")
+	dbPort := os.Getenv("POSTGRES_PORT")
+	dbUser := os.Getenv("POSTGRES_USER")
+	dbPassword := os.Getenv("POSTGRES_PASSWORD")
+	dbDb := os.Getenv("POSTGRES_DB")
+	eventHost := os.Getenv("KAFKA_HOST")
+	eventPort := os.Getenv("KAFKA_PORT")
+
 	// setup dependencies
-	profileRepo, err := db.NewProfileRepo("root", "password", 5433, "hackday")
+	profileRepo, err := db.NewProfileRepo(dbHost, dbPort, dbUser, dbPassword, dbDb)
 	if err != nil {
 		log.Fatalf("Error connecting to database: %s", err)
 	}
-	adapter, err := events.NewEventAdapter()
+	adapter, err := events.NewEventAdapter(eventHost, eventPort)
 	if err != nil {
 		log.Fatalf("Error connecting to eventbus: %s", err)
 	}
@@ -23,11 +33,6 @@ func main() {
 	if err != nil {
 		log.Fatalf("Error creating service: %s", err)
 	}
-	eventAdapter, err := events.NewEventAdapter()
-	if err != nil {
-		log.Fatalf("Error creating eventAdpater: %s", err)
-	}
-	log.Printf("here: %s", eventAdapter)
 
 	// http server
 	fs := http.FileServer(http.Dir("static/"))

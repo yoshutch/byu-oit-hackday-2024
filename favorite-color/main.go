@@ -13,8 +13,17 @@ import (
 )
 
 func main() {
+	// env variables
+	dbHost := os.Getenv("POSTGRES_HOST")
+	dbPort := os.Getenv("POSTGRES_PORT")
+	dbUser := os.Getenv("POSTGRES_USER")
+	dbPassword := os.Getenv("POSTGRES_PASSWORD")
+	dbDb := os.Getenv("POSTGRES_DB")
+	eventHost := os.Getenv("KAFKA_HOST")
+	eventPort := os.Getenv("KAFKA_PORT")
+
 	// setup dependencies
-	favColorRepo, err := db.NewFavColorRepo("root", "password", 5433, "hackday")
+	favColorRepo, err := db.NewFavColorRepo(dbHost, dbPort, dbUser, dbPassword, dbDb)
 	if err != nil {
 		log.Fatalf("Error connecting to database: %s", err)
 	}
@@ -39,7 +48,7 @@ func main() {
 	}
 	restAdapter.HandleRoutes()
 
-	eventAdapter, err := events.NewEventAdapter(favColorService)
+	eventAdapter, err := events.NewEventAdapter(eventHost, eventPort, favColorService)
 	if err != nil {
 		log.Fatalf("Failed to instantiate event adapter: %s", err)
 	}
@@ -56,12 +65,12 @@ func main() {
 	}()
 
 	go serverListen(mux)
-	go func() {
-		err := eventAdapter.Listen()
-		if err != nil {
-			log.Fatalf("Error listening to eventAdapter: %s", err)
-		}
-	}()
+	//go func() {
+	//	err := eventAdapter.Listen()
+	//	if err != nil {
+	//		log.Fatalf("Error listening to eventAdapter: %s", err)
+	//	}
+	//}()
 	// wait for exit code
 	exitCode := <-exitchnl
 	os.Exit(exitCode)

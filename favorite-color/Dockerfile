@@ -1,14 +1,13 @@
-FROM golang:1.19.13-alpine
+FROM golang:1.23.1-alpine
 LABEL authors="yoshutch"
 
 WORKDIR /app
 
-COPY go.mod ./
+COPY . ./
 RUN go mod download
-COPY *.go ./
-RUN CGO_ENABLED=0 GOOS=linux go build -o /docker-img
+RUN CGO_ENABLED=0 GOOS=linux go build -o run-app
 
 EXPOSE 8080
 
 # Run
-CMD ["/docker-img"]
+CMD ["./run-app"]

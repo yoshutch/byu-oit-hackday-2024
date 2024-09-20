@@ -1,20 +1,31 @@
 services:
-#  profile:
-#    build: ./profile
-#    ports:
-#      - "8080:8080"
-#  favorite-color:
-#    build: ./favorite-color
-#    ports:
-#      - "8081:8081"
+  profile:
+    build: ./profile
+    ports:
+      - "8080:8080"
+    env_file:
+      - local.env
+    environment:
+      POSTGRES_HOST: db
+      KAFKA_HOST: eventbus
+      KAFKA_PORT: 19092
+  favorite-color:
+    build: ./favorite-color
+    ports:
+      - "8081:8081"
+    env_file:
+      - local.env
+    environment:
+      POSTGRES_HOST: db
+      KAFKA_HOST: eventbus
+      KAFKA_PORT: 29092
+      PROFILE_SERVICE_HOST: profile:8080
   db:
     image: postgres:16
-    environment:
-      POSTGRES_USER: root
-      POSTGRES_PASSWORD: password
-      POSTGRES_DB: hackday
+    env_file:
+      - local.env
     ports:
-      - "5433:5432"
+      - "5432:5432"
     volumes:
       - ./local/postgres/data:/var/lib/postgres/data
       - ./local/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
@@ -28,6 +39,11 @@ services:
     image: apache/kafka
     ports:
       - "9092:9092"
+#    environment:
+#      KAFKA_LISTENERS: LISTENER_A://eventbus:19092,LISTENER_B://eventbus:29092
+#      KAFKA_ADVERTISED_LISTENERS: LISTENER_A://kafka0:29092,LISTENER_B://localhost:29092
+#      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: LISTENER_A:PLAINTEXT,LISTENER_B:PLAINTEXT
+#      KAFKA_INTER_BROKER_LISTENER_NAME: LISTENER_A, LISTENER_B
     volumes:
       - ./local/kafka/data:/var/lib/kafka/data
 # TODO find a way to automatically bootstrap topics

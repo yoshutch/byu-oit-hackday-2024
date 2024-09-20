@@ -14,7 +14,7 @@ type EventAdapter struct {
 	writer *kafka.Writer
 }
 
-func NewEventAdapter() (*EventAdapter, error) {
+func NewEventAdapter(host string, port string) (*EventAdapter, error) {
 	//p, err := kafka.NewProducer(&kafka.ConfigMap{
 	//	"bootstrap.servers": "eventbus:9092",
 	//	"client.id":         "local123",
@@ -24,7 +24,7 @@ func NewEventAdapter() (*EventAdapter, error) {
 	//}
 	//return &EventAdapter{producer: p}, nil
 	w := &kafka.Writer{
-		Addr: kafka.TCP("localhost:9092"),
+		Addr: kafka.TCP(host + ":" + port),
 		//Topic:    "profile-updated",
 		Balancer: &kafka.LeastBytes{},
 	}

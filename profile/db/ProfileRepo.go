@@ -12,8 +12,8 @@ type ProfileRepo struct {
 	db *sql.DB
 }
 
-func NewProfileRepo(username string, password string, port int, database string) (*ProfileRepo, error) {
-	connStr := fmt.Sprintf("user=%s password=%s port=%d database=%s sslmode=disable", username, password, port, database)
+func NewProfileRepo(host string, port string, username string, password string, database string) (*ProfileRepo, error) {
+	connStr := fmt.Sprintf("host=%s port=%s user=%s password=%s database=%s sslmode=disable", host, port, username, password, database)
 
 	db, err := sql.Open("postgres", connStr)
 	if err != nil {

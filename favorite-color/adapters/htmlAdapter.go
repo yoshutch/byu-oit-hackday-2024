@@ -2,9 +2,8 @@ package adapters
 
 import (
 	"byu.edu/hackday-favorite-color/clients"
-	dto2 "byu.edu/hackday-favorite-color/dto"
+	"byu.edu/hackday-favorite-color/dto"
 	"byu.edu/hackday-favorite-color/services"
-	"byu.edu/hackday-profile/dto"
 	"html/template"
 	"log"
 	"net/http"
@@ -39,7 +38,7 @@ func (h HtmlAdapter) HandleRoutes() {
 	h.mux.HandleFunc("GET /{$}", func(w http.ResponseWriter, r *http.Request) {
 		type IndexData struct {
 			Profile  *dto.Profile
-			FavColor *dto2.FavoriteColor
+			FavColor *dto.FavoriteColor
 		}
 
 		profile, err := clients.GetProfile(1)

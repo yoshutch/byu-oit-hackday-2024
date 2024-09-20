@@ -1,15 +1,17 @@
 package clients
 
 import (
-	"byu.edu/hackday-profile/dto"
+	"byu.edu/hackday-favorite-color/dto"
 	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
+	"os"
 )
 
 func GetProfile(id int) (*dto.Profile, error) {
-	resp, err := http.Get(fmt.Sprintf("http://localhost:8080/api/profile/%d", id))
+	host := os.Getenv("PROFILE_SERVICE_HOST")
+	resp, err := http.Get(fmt.Sprintf("http://%s/api/profile/%d", host, id))
 	if err != nil {
 		return nil, err
 	}

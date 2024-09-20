@@ -3,7 +3,6 @@ package services
 import (
 	"byu.edu/hackday-favorite-color/db"
 	"byu.edu/hackday-favorite-color/dto"
-	dto2 "byu.edu/hackday-profile/dto"
 	"fmt"
 )
 
@@ -19,7 +18,7 @@ func (s FavColorService) LoadFavColor(id int) (*dto.FavoriteColor, error) {
 	return s.repo.GetFavoriteColor(id)
 }
 
-func (s FavColorService) UpdateName(id int, profile dto2.Profile) error {
+func (s FavColorService) UpdateName(id int, profile dto.Profile) error {
 	existing, err := s.repo.GetFavoriteColor(id)
 	if err != nil {
 		return nil

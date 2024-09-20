@@ -1,8 +1,8 @@
 package events
 
 import (
+	"byu.edu/hackday-favorite-color/dto"
 	"byu.edu/hackday-favorite-color/services"
-	"byu.edu/hackday-profile/dto"
 	"context"
 	"encoding/json"
 	"fmt"
@@ -15,9 +15,9 @@ type EventAdapter struct {
 	favColorService *services.FavColorService
 }
 
-func NewEventAdapter(service *services.FavColorService) (*EventAdapter, error) {
+func NewEventAdapter(host string, port string, service *services.FavColorService) (*EventAdapter, error) {
 	r := kafka.NewReader(kafka.ReaderConfig{
-		Brokers:   []string{"localhost:9092"},
+		Brokers:   []string{host + ":" + port},
 		Topic:     "profile-updated",
 		Partition: 0,
 		MaxBytes:  10e6,
