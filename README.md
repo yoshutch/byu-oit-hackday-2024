@@ -1,5 +1,7 @@
-# Hack Day 2024 - Go, Go-Template, HTMX (GoTH) Stack
+# BYU OIT AppEng Hack Day 2024
+Proof of Concept application idea with Go and HTMX.
 
+## Go, Go-Template, HTMX (GoTH) Stack
 I wanted to prove out a Go stack that provides both REST APIs and HTML pages.
 
 I also wanted to test out Kafka as an internal event bus between different apps.
